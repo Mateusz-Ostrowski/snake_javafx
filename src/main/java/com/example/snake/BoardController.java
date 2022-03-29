@@ -46,10 +46,12 @@ public class BoardController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
       Timeline t = new Timeline(new KeyFrame(Duration.millis(200), event -> {
-        boardModel.move();
-        drawBackground();
-        drawSnake();
-        drawFood();
+          boardModel.move();
+          if(!boardModel.getGameOver()) {
+              drawBackground();
+              drawSnake();
+              drawFood();
+          }
       }));
        t.setCycleCount(Animation.INDEFINITE);
        t.play();

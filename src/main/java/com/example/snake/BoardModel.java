@@ -13,6 +13,7 @@ public class BoardModel {
   private MovementDirection direction;
   private final Point foodLocation;
   private final Random random;
+  private Boolean gameOver = false;
 
   public BoardModel(int width, int height, MovementDirection startDirection) {
     this.random = new Random();
@@ -24,6 +25,10 @@ public class BoardModel {
   }
 
   public void move() {
+    if(gameOver){
+      return;
+    }
+    //Move whole body by 1 block
     SnakeSegment currentSegment = snakeHead.getPrev();
     Point prevLocation = snakeHead.getLocation();
     snakeHead.setLocation(prevLocation.plus(direction.getVector()));
@@ -34,6 +39,10 @@ public class BoardModel {
       currentSegment = currentSegment.getPrev();
     }
 
+    //Detect collision
+    collision();
+
+    //Eat food
     if(snakeHead.getLocation().equals(foodLocation)){
       SnakeSegment lastSegment = snakeHead;
       while(lastSegment.getPrev()!=null){
@@ -41,13 +50,29 @@ public class BoardModel {
       }
       lastSegment.setPrev(new SnakeSegment(prevLocation,null));
       spawnFood();
+    }
 
-      System.out.println("TEST");
+  }
+
+  private void collision(){
+    if(
+            snakeHead.getLocation().getX() >= width ||
+            snakeHead.getLocation().getX() < 0 ||
+            snakeHead.getLocation().getY() >= height ||
+            snakeHead.getLocation().getY() < 0){
+      gameOver = true;
+
+    }else {
+      SnakeSegment currentSegment = snakeHead.getPrev();
+      while (currentSegment != null) {
+        if (getSnakeHead().getLocation().equals(currentSegment.getLocation())) {
+          gameOver = true;
+        }
+        currentSegment = currentSegment.getPrev();
+      }
     }
   }
-//    public FieldType[][] getFields() {
-//        return fields;
-//    }
+
   public SnakeSegment getSnakeHead() {
     return snakeHead;
   }
@@ -77,5 +102,10 @@ public class BoardModel {
   public void spawnFood(){
     this.foodLocation.setX(random.nextInt(width));
     this.foodLocation.setY(random.nextInt(height));
+  }
+
+
+  public Boolean getGameOver() {
+    return gameOver;
   }
 }
