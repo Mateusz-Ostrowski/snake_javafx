@@ -18,8 +18,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class BoardController implements Initializable {
-    private final int BOARD_WIDTH = 16;
-    private final int BOARD_HEIGHT = 16;
+    private final int BOARD_WIDTH = 14;
+    private final int BOARD_HEIGHT = 14;
     private final double SQUARE_SIZE = 30;
     private final double SNAKE_HEAD_SIZE = 22;
     private final double SNAKE_BODY_SIZE = 14;
@@ -73,16 +73,16 @@ public class BoardController implements Initializable {
     }
 
     private void drawSnake(){
-        drawSnakeSegment(boardModel.getSnakeHead(),true);
+        drawSnakeSegment(boardModel.getSnakeHead());
 
         SnakeSegment currentSegment = boardModel.getSnakeHead().getPrev();
         while(currentSegment != null){
-            drawSnakeSegment(currentSegment,false);
+            drawSnakeSegment(currentSegment);
             currentSegment = currentSegment.getPrev();
         }
     }
 
-    private void drawSnakeSegment(SnakeSegment segment, boolean isHead){
+    private void drawSnakeSegment(SnakeSegment segment){
         Point location = segment.getLocation();
         if(boardModel.getSnakeHead().equals(segment)){
             boardCanvas.getGraphicsContext2D().drawImage(resolveSegmentImage(segment),location.getX() * SQUARE_SIZE, location.getY() * SQUARE_SIZE,SQUARE_SIZE,SQUARE_SIZE);
@@ -93,14 +93,66 @@ public class BoardController implements Initializable {
 
     private Image resolveSegmentImage(SnakeSegment segment){
         if(segment.getPrev() == null){
-            return new Image("/images/tail_"+resolveSegmentDirection());
+            return new Image("images/tail_"+resolveTailDirection(segment));
         }
         if(segment.equals(boardModel.getSnakeHead())){
-            return new Image("/images/tail_"+resolveSegmentDirection());
+            return new Image("images/head_"+resolveHeadDirection(segment));
         }
-        return new Image("/images/tail_"+resolveSegmentDirection());
+        return new Image("images/body_"+resolveBodyDirection(segment));
     }
 
+    private String resolveHeadDirection(SnakeSegment segment){
+      Point currentLocation = segment.getLocation();
+      Point prevLocation = segment.getPrev().getLocation();
+      if(currentLocation.getX() > prevLocation.getX()){
+        return "right.png";
+      }
+      if(currentLocation.getY() > prevLocation.getY()){
+        return "down.png";
+      }
+      if(currentLocation.getX() < prevLocation.getX()){
+        return "left.png";
+      }
+      return "up.png";
+    }
+    private String resolveTailDirection(SnakeSegment segment){
+      Point currentLocation = segment.getLocation();
+      Point nextLocation = segment.getNext().getLocation();
+      if(currentLocation.getX() > nextLocation.getX()){
+        return "right.png";
+      }
+      if(currentLocation.getY() > nextLocation.getY()){
+        return "down.png";
+      }
+      if(currentLocation.getX() < nextLocation.getX()){
+        return "left.png";
+      }
+      return "up.png";
+    }
+    private String resolveBodyDirection(SnakeSegment segment) {
+      Point nextLocation = segment.getNext().getLocation();
+      Point currentLocation = segment.getLocation();
+      Point prevLocation = segment.getPrev().getLocation();
+      if (prevLocation.getY() == nextLocation.getY()) {
+        return "horizontal.png";
+      }
+      if (prevLocation.getX() == nextLocation.getX()) {
+        return "vertical.png";
+      }
+      if (prevLocation.getX() != prevLocation.getX()) {
+        if(prevLocation.getY() == nextLocation.getY()){
+          return "topleft.png";
+        }else{
+          return "topright.png";
+        }
+      } else {
+        if(prevLocation.getY() > nextLocation.getY()){
+          return "bottomright.png";
+        }else{
+          return "bottomleft.png";
+        }
+      }
+    }
     private void drawFood(){
         boardCanvas.getGraphicsContext2D().setFill(Color.web("ff0000"));
         boardCanvas.getGraphicsContext2D().fillRect(
