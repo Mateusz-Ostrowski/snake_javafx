@@ -9,6 +9,7 @@ import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
@@ -61,10 +62,10 @@ public class BoardController implements Initializable {
         for(int i = 0;i<boardModel.getHeight();i++){
             for(int j = 0;j<boardModel.getWidth();j++){
                 if((i+j)%2==0) {
-                    boardCanvas.getGraphicsContext2D().setFill(Color.web("49ba18"));
+                    boardCanvas.getGraphicsContext2D().setFill(Color.web("AAD751"));
                     boardCanvas.getGraphicsContext2D().fillRect(j * SQUARE_SIZE, i * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
                 }else{
-                    boardCanvas.getGraphicsContext2D().setFill(Color.web("4fe010"));
+                    boardCanvas.getGraphicsContext2D().setFill(Color.web("A2D149"));
                     boardCanvas.getGraphicsContext2D().fillRect(j * SQUARE_SIZE, i * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
                 }
             }
@@ -83,13 +84,21 @@ public class BoardController implements Initializable {
 
     private void drawSnakeSegment(SnakeSegment segment, boolean isHead){
         Point location = segment.getLocation();
-        if(isHead){
-            boardCanvas.getGraphicsContext2D().setFill(Color.web("0000bb"));
-            boardCanvas.getGraphicsContext2D().fillRect(location.getX() * SQUARE_SIZE, location.getY() * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
+        if(boardModel.getSnakeHead().equals(segment)){
+            boardCanvas.getGraphicsContext2D().drawImage(resolveSegmentImage(segment),location.getX() * SQUARE_SIZE, location.getY() * SQUARE_SIZE,SQUARE_SIZE,SQUARE_SIZE);
         }else {
-            boardCanvas.getGraphicsContext2D().setFill(Color.web("0000ff"));
-            boardCanvas.getGraphicsContext2D().fillRect(location.getX() * SQUARE_SIZE, location.getY() * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
+            boardCanvas.getGraphicsContext2D().drawImage(resolveSegmentImage(segment),location.getX() * SQUARE_SIZE, location.getY() * SQUARE_SIZE,SQUARE_SIZE,SQUARE_SIZE);
         }
+    }
+
+    private Image resolveSegmentImage(SnakeSegment segment){
+        if(segment.getPrev() == null){
+            return new Image("/images/tail_"+resolveSegmentDirection());
+        }
+        if(segment.equals(boardModel.getSnakeHead())){
+            return new Image("/images/tail_"+resolveSegmentDirection());
+        }
+        return new Image("/images/tail_"+resolveSegmentDirection());
     }
 
     private void drawFood(){

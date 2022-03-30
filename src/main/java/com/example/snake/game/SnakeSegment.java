@@ -1,5 +1,7 @@
 package com.example.snake.game;
 
+import java.util.Objects;
+
 public class SnakeSegment {
     private Point location;
     private SnakeSegment prev;
@@ -23,5 +25,18 @@ public class SnakeSegment {
 
     public void setPrev(SnakeSegment prev) {
         this.prev = prev;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SnakeSegment that = (SnakeSegment) o;
+        return Objects.equals(location, that.location);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(location);
     }
 }

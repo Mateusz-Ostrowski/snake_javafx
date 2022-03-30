@@ -90,7 +90,7 @@ public class BoardModel {
   }
 
   public void changeDirection(MovementDirection direction) {
-    if (!direction.getVector().isReverse(this.direction.getVector())) {
+    if (!snakeHead.getLocation().plus(direction.getVector()).equals(snakeHead.getPrev().getLocation())) {
       this.direction = direction;
     }
   }
