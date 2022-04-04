@@ -9,6 +9,7 @@ import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
@@ -25,9 +26,11 @@ public class BoardController implements Initializable {
     private final double SNAKE_BODY_SIZE = 14;
 
     private final BoardModel boardModel;
+    private final boolean isPaused = true;
+    public Button start;
 
     public BoardController() {
-        this.boardModel = new BoardModel(BOARD_WIDTH,BOARD_HEIGHT, MovementDirection.RIGHT);
+        this.boardModel = new BoardModel(BOARD_WIDTH,BOARD_HEIGHT, MovementDirection.DOWN);
     }
 
     @FXML
@@ -47,7 +50,9 @@ public class BoardController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
       Timeline t = new Timeline(new KeyFrame(Duration.millis(200), event -> {
-          boardModel.move();
+          if(!isPaused) {
+              boardModel.move();
+          }
           if(!boardModel.getGameOver()) {
               drawBackground();
               drawSnake();
@@ -130,35 +135,57 @@ public class BoardController implements Initializable {
       return "up.png";
     }
     private String resolveBodyDirection(SnakeSegment segment) {
-      Point nextLocation = segment.getNext().getLocation();
-      Point currentLocation = segment.getLocation();
-      Point prevLocation = segment.getPrev().getLocation();
-      if (prevLocation.getY() == nextLocation.getY()) {
-        return "horizontal.png";
-      }
-      if (prevLocation.getX() == nextLocation.getX()) {
+        Point nextLocation = segment.getNext().getLocation();
+        Point currentLocation = segment.getLocation();
+        Point prevLocation = segment.getPrev().getLocation();
+        if (prevLocation.getY() == nextLocation.getY()) {
+            return "horizontal.png";
+        }
+        if (prevLocation.getX() == nextLocation.getX()) {
+            return "vertical.png";
+        }
+        if (isBottomRight(prevLocation,currentLocation, nextLocation)) {
+            return "bottomright.png";
+        }
+        if (isBottomLeft(prevLocation,currentLocation, nextLocation)) {
+            return "bottomleft.png";
+        }
+        if (isTopRight(prevLocation,currentLocation, nextLocation)) {
+            return "topright.png";
+        }
+        if (isTopLeft(prevLocation,currentLocation, nextLocation)) {
+            return "topleft.png";
+        }
         return "vertical.png";
-      }
-      if (prevLocation.getX() != prevLocation.getX()) {
-        if(prevLocation.getY() == nextLocation.getY()){
-          return "topleft.png";
-        }else{
-          return "topright.png";
-        }
-      } else {
-        if(prevLocation.getY() > nextLocation.getY()){
-          return "bottomright.png";
-        }else{
-          return "bottomleft.png";
-        }
-      }
+
     }
+
+    private boolean isBottomRight(Point prev, Point current, Point next){
+        return  (current.isAbove(next) && current.isLeft(prev))
+                ||
+                (current.isAbove(prev) && current.isLeft(next));
+    }
+
+    private boolean isBottomLeft(Point prev, Point current, Point next){
+        return  (current.isAbove(next) && current.isRight(prev))
+                ||
+                (current.isAbove(prev) && current.isRight(next));
+    }
+
+    private boolean isTopRight(Point prev, Point current, Point next){
+        return  (current.isBelow(next) && current.isLeft(prev))
+                ||
+                (current.isBelow(prev) && current.isLeft(next));
+    }
+
+    private boolean isTopLeft(Point prev, Point current, Point next){
+        return  (current.isBelow(next) && current.isRight(prev))
+                ||
+                (current.isBelow(prev) && current.isRight(next));
+    }
+
     private void drawFood(){
-        boardCanvas.getGraphicsContext2D().setFill(Color.web("ff0000"));
-        boardCanvas.getGraphicsContext2D().fillRect(
-          boardModel.getFoodLocation().getX()*SQUARE_SIZE,
-          boardModel.getFoodLocation().getY()*SQUARE_SIZE,
-            SQUARE_SIZE,SQUARE_SIZE);
+        boardCanvas.getGraphicsContext2D().drawImage(new Image("images/apple.png"), boardModel.getFoodLocation().getX() * SQUARE_SIZE, boardModel.getFoodLocation().getY() * SQUARE_SIZE,SQUARE_SIZE,SQUARE_SIZE);
     }
 
     public void focus(){

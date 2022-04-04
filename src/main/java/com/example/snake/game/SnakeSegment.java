@@ -40,6 +40,17 @@ public class SnakeSegment {
     this.next = next;
   }
 
+  public boolean contains(Point point){
+        SnakeSegment segment = this;
+        while(segment!=null){
+            if(segment.getLocation().equals(point)){
+                return true;
+            }
+            segment = segment.getPrev();
+        }
+        return false;
+  }
+
   @Override
     public boolean equals(Object o) {
         if (this == o) return true;

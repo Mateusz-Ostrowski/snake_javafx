@@ -34,6 +34,19 @@ public class Point {
         return this.getX() == -p.getX() && this.getY() == -p.getY();
     }
 
+    public boolean isAbove(Point p){
+        return this.y < p.getY();
+    }
+    public boolean isBelow(Point p){
+        return this.y > p.getY();
+    }
+    public boolean isRight(Point p){
+        return this.x > p.getX();
+    }
+    public boolean isLeft(Point p){
+        return this.x < p.getX();
+    }
+
     public boolean equals(Point p){
       return this.x == p.getX() && this.y == p.getY();
     }

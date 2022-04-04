@@ -13,7 +13,7 @@ public class BoardModel {
   private MovementDirection direction;
   private final Point foodLocation;
   private final Random random;
-  private Boolean gameOver = false;
+  private boolean gameOver = false;
 
   public BoardModel(int width, int height, MovementDirection startDirection) {
     this.random = new Random();
@@ -100,8 +100,10 @@ public class BoardModel {
   }
 
   public void spawnFood(){
-    this.foodLocation.setX(random.nextInt(width));
-    this.foodLocation.setY(random.nextInt(height));
+    do {
+      this.foodLocation.setX(random.nextInt(width));
+      this.foodLocation.setY(random.nextInt(height));
+    }while (snakeHead.contains(foodLocation));
   }
 
 
