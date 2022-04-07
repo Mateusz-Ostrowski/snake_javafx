@@ -226,17 +226,17 @@ public class BoardController implements Initializable {
         else if (prevLocation.getX() == nextLocation.getX()) {
             suffix = "vertical.png";
         }
-        else if (isBottomRight(prevLocation, currentLocation, nextLocation)) {
-            suffix ="bottomright.png";
-        }
-        else if (isBottomLeft(prevLocation, currentLocation, nextLocation)) {
-            suffix ="bottomleft.png";
+        else if (isTopLeft(prevLocation, currentLocation, nextLocation)) {
+            suffix ="topleft.png";
         }
         else if (isTopRight(prevLocation, currentLocation, nextLocation)) {
             suffix ="topright.png";
         }
-        else if (isTopLeft(prevLocation, currentLocation, nextLocation)) {
-            suffix ="topleft.png";
+        else if (isBottomLeft(prevLocation, currentLocation, nextLocation)) {
+            suffix ="bottomleft.png";
+        }
+        else if (isBottomRight(prevLocation, currentLocation, nextLocation)) {
+            suffix ="bottomright.png";
         }else {
             suffix = "vertical.png";
         }
@@ -253,7 +253,7 @@ public class BoardController implements Initializable {
      * @param next punkt nastepny
      * @return
      */
-    private boolean isBottomRight(Point prev, Point current, Point next) {
+    private boolean isTopLeft(Point prev, Point current, Point next) {
         return (current.isAbove(next) && current.isLeft(prev))
                 ||
                 (current.isAbove(prev) && current.isLeft(next));
@@ -267,7 +267,7 @@ public class BoardController implements Initializable {
      * @param next punkt nastepny
      * @return
      */
-    private boolean isBottomLeft(Point prev, Point current, Point next) {
+    private boolean isTopRight(Point prev, Point current, Point next) {
         return (current.isAbove(next) && current.isRight(prev))
                 ||
                 (current.isAbove(prev) && current.isRight(next));
@@ -281,7 +281,7 @@ public class BoardController implements Initializable {
      * @param next punkt nastepny
      * @return
      */
-    private boolean isTopRight(Point prev, Point current, Point next) {
+    private boolean isBottomLeft(Point prev, Point current, Point next) {
         return (current.isBelow(next) && current.isLeft(prev))
                 ||
                 (current.isBelow(prev) && current.isLeft(next));
@@ -296,7 +296,7 @@ public class BoardController implements Initializable {
      * @param next punkt nastepny
      * @return
      */
-    private boolean isTopLeft(Point prev, Point current, Point next) {
+    private boolean isBottomRight(Point prev, Point current, Point next) {
         return (current.isBelow(next) && current.isRight(prev))
                 ||
                 (current.isBelow(prev) && current.isRight(next));
