@@ -1,5 +1,8 @@
 package com.example.snake.game;
 
+/**
+ * Klasa reprezentująca punkt
+ */
 public class Point {
     private int x;
     private int y;
@@ -27,11 +30,6 @@ public class Point {
 
     public Point plus(Point p){
       return new Point(x+p.getX(),y+p.getY());
-    }
-
-    //Czy dwa punkty sa przeciwne
-    public boolean isReverse(Point p){
-        return this.getX() == -p.getX() && this.getY() == -p.getY();
     }
 
     public boolean isAbove(Point p){

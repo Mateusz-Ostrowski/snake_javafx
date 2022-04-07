@@ -2,6 +2,12 @@ package com.example.snake.game;
 
 import java.util.Objects;
 
+/**
+ * Klasa reprezentująca każdą część węża
+ * Zaimplementowana w postaci listy dwukierunkowej
+ * Każdy segment posiada odwołanie do kolejnego i poprzedniego elementu oraz swoje położenie
+ */
+
 public class SnakeSegment {
     private Point location;
     private SnakeSegment prev;
@@ -13,6 +19,10 @@ public class SnakeSegment {
         if(prev!=null){
           prev.setNext(this);
         }
+    }
+
+    public SnakeSegment(Point location) {
+        this(location,null);
     }
 
     public Point getLocation() {
@@ -42,6 +52,11 @@ public class SnakeSegment {
     this.next = next;
   }
 
+    /**
+     * Sprawdza czy punkt wskazany przez parametr zawiera się w obecnym segmencie węża lub do niego poprzednich
+     * @param point punkt szukany w wężu
+     * @return
+     */
   public boolean contains(Point point){
         SnakeSegment segment = this;
         while(segment!=null){

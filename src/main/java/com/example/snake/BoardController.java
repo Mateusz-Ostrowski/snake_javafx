@@ -19,18 +19,19 @@ import javafx.util.Duration;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * Kontroler odpowiadający za graficzną reprezentacje całego interfejsu gry oraz wykonujący pętle gry
+ */
 public class BoardController implements Initializable {
     private final int BOARD_WIDTH = 14;
     private final int BOARD_HEIGHT = 14;
     private final double SQUARE_SIZE = 30;
-    private final double SNAKE_HEAD_SIZE = 22;
-    private final double SNAKE_BODY_SIZE = 14;
 
     private final BoardModel boardModel;
     private boolean isPaused = true;
 
     public BoardController() {
-        this.boardModel = new BoardModel(BOARD_WIDTH,BOARD_HEIGHT, MovementDirection.DOWN);
+        this.boardModel = new BoardModel(BOARD_WIDTH, BOARD_HEIGHT, MovementDirection.DOWN);
     }
 
     @FXML
@@ -44,50 +45,54 @@ public class BoardController implements Initializable {
 
     @FXML
     protected void onKeyPressed(KeyEvent event) {
-      if(!isPaused) {
-        switch (event.getCode()) {
-          case UP -> boardModel.changeDirection(MovementDirection.UP);
-          case DOWN -> boardModel.changeDirection(MovementDirection.DOWN);
-          case LEFT -> boardModel.changeDirection(MovementDirection.LEFT);
-          case RIGHT -> boardModel.changeDirection(MovementDirection.RIGHT);
+        if (!isPaused) {
+            switch (event.getCode()) {
+                case UP -> boardModel.changeDirection(MovementDirection.UP);
+                case DOWN -> boardModel.changeDirection(MovementDirection.DOWN);
+                case LEFT -> boardModel.changeDirection(MovementDirection.LEFT);
+                case RIGHT -> boardModel.changeDirection(MovementDirection.RIGHT);
+            }
         }
-      }
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-      Timeline t = new Timeline(new KeyFrame(Duration.millis(200), event -> {
-          if(!isPaused) {
-              boardModel.move();
-          }
-          if(!boardModel.getGameOver()) {
-              drawBackground();
-              drawSnake();
-              drawFood();
-              scoreLabel.setText("Wynik: " + boardModel.getScore());
-          }else{
-              scoreLabel.setText("Koniec gry twoj koncowy wynik to: "+boardModel.getScore());
-              startButton.setVisible(true);
-          }
-      }));
-       t.setCycleCount(Animation.INDEFINITE);
-       t.play();
+        //Petla gry
+        Timeline t = new Timeline(new KeyFrame(Duration.millis(170), event -> {
+            if (!isPaused) {
+                boardModel.update();
+            }
+            if (!boardModel.isGameOver()) {
+                drawBackground();
+                drawSnake();
+                drawFood();
+                scoreLabel.setText("Wynik: " + boardModel.getScore());
+            } else {
+                scoreLabel.setText("Koniec gry twoj koncowy wynik to: " + boardModel.getScore());
+                startButton.setVisible(true);
+            }
+        }));
+        t.setCycleCount(Animation.INDEFINITE);
+        t.play();
     }
 
     public void startButton() {
-      isPaused = false;
-      startButton.setVisible(false);
-      boardModel.restart();
+        isPaused = false;
+        startButton.setVisible(false);
+        boardModel.restart();
     }
 
-    private void drawBackground(){
-        for(int i = 0;i<boardModel.getHeight();i++){
-            for(int j = 0;j<boardModel.getWidth();j++){
-                if((i+j)%2==0) {
+    /**
+     * Rysuje na canvasie kratki odpowiadające planszy po której porusza się wąż
+     */
+    private void drawBackground() {
+        for (int i = 0; i < boardModel.getHeight(); i++) {
+            for (int j = 0; j < boardModel.getWidth(); j++) {
+                if ((i + j) % 2 == 0) {
                     boardCanvas.getGraphicsContext2D().setFill(Color.web("AAD751"));
                     boardCanvas.getGraphicsContext2D().fillRect(j * SQUARE_SIZE, i * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
-                }else{
+                } else {
                     boardCanvas.getGraphicsContext2D().setFill(Color.web("A2D149"));
                     boardCanvas.getGraphicsContext2D().fillRect(j * SQUARE_SIZE, i * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
                 }
@@ -95,120 +100,219 @@ public class BoardController implements Initializable {
         }
     }
 
-    private void drawSnake(){
+    /**
+     * Rysuje wszystkie segmenty węża
+     */
+    private void drawSnake() {
         drawSnakeSegment(boardModel.getSnakeHead());
 
         SnakeSegment currentSegment = boardModel.getSnakeHead().getPrev();
-        while(currentSegment != null){
+        while (currentSegment != null) {
             drawSnakeSegment(currentSegment);
             currentSegment = currentSegment.getPrev();
         }
     }
 
-    private void drawSnakeSegment(SnakeSegment segment){
+    /**
+     * Rysuje pojedyńczy segment węża
+     * @param segment segment do narysowania
+     */
+    private void drawSnakeSegment(SnakeSegment segment) {
         Point location = segment.getLocation();
-        if(boardModel.getSnakeHead().equals(segment)){
-            boardCanvas.getGraphicsContext2D().drawImage(resolveSegmentImage(segment),location.getX() * SQUARE_SIZE, location.getY() * SQUARE_SIZE,SQUARE_SIZE,SQUARE_SIZE);
-        }else {
-            boardCanvas.getGraphicsContext2D().drawImage(resolveSegmentImage(segment),location.getX() * SQUARE_SIZE, location.getY() * SQUARE_SIZE,SQUARE_SIZE,SQUARE_SIZE);
+        if (boardModel.getSnakeHead().equals(segment)) {
+            boardCanvas.getGraphicsContext2D().drawImage(resolveSegmentImage(segment), location.getX() * SQUARE_SIZE, location.getY() * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
+        } else {
+            boardCanvas.getGraphicsContext2D().drawImage(resolveSegmentImage(segment), location.getX() * SQUARE_SIZE, location.getY() * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
         }
     }
+    /**
+     * Zwraca odpowiedni Image z pliku graficznego segmentu węża zależnie od tego czy jest ono głową, ogonem czy
+     * ciałem
+     * @param segment
+     * @return odpowiedni Image z pliku graficznego
+     */
+    private Image resolveSegmentImage(SnakeSegment segment) {
+        if (segment.getPrev() == null) {
+            return resolveTailDirection(segment);
+        }
+        if (segment.equals(boardModel.getSnakeHead())) {
+            return resolveHeadImageFromDirection(segment);
+        }
+        return resolveBodyDirection(segment);
+    }
 
-    private Image resolveSegmentImage(SnakeSegment segment){
+    /**
+     * Zwraca odpowiedni Image z pliku graficznego ogona węża zależnie od kierunku danego segmentu
+     * Kierunek jest sprawdzany na podstawie położenia obecnego segmentu i do niego poprzedniego
+     * @param segment segment którego kierunek jest sprawdzana
+     * @return odpowiedni Image z pliku graficznego głowy węża
+     */
+    private Image resolveHeadImageFromDirection(SnakeSegment segment) {
+        if(segment.getNext()!=null){
+            throw new IllegalArgumentException("Głowa powinna być pierwszym segmentem!");
+        }
+
+        String imageUrl = "images/head_";
+        String suffix;
+        Point currentLocation = segment.getLocation();
+        Point prevLocation = segment.getPrev().getLocation();
+        if (currentLocation.getX() > prevLocation.getX()) {
+            suffix = "right.png";
+        }
+        else if (currentLocation.getY() > prevLocation.getY()) {
+            suffix = "down.png";
+        }
+        else if (currentLocation.getX() < prevLocation.getX()) {
+            suffix = "left.png";
+        }else{
+            suffix = "up.png";
+        }
+        return new Image(imageUrl+suffix);
+    }
+
+    /**
+     * Zwraca odpowiedni Image z pliku graficznego ogona węża zależnie od kierunku danego segmentu
+     * Kierunek jest sprawdzany na podstawie położenia segmentu i jego następnego
+     * @param segment segment którego kierunek jest sprawdzana
+     * @return Image z odpowiedniego pliku graficznego ogona węża
+     */
+    private Image resolveTailDirection(SnakeSegment segment) {
+        if(segment.getPrev()!=null){
+            throw new IllegalArgumentException("Ogon powinien być ostatnim segmentem!");
+        }
+        if(segment.getNext()==null){
+            throw new IllegalArgumentException("Ogon nie powinien być pierwszym segmentem!");
+        }
+
+        String imageUrl = "images/tail_";
+        String suffix;
+        Point currentLocation = segment.getLocation();
+        Point nextLocation = segment.getNext().getLocation();
+        if (currentLocation.getX() > nextLocation.getX()) {
+            suffix = "right.png";
+        }
+        else if (currentLocation.getY() > nextLocation.getY()) {
+            suffix = "down.png";
+        }
+        else if (currentLocation.getX() < nextLocation.getX()) {
+            suffix = "left.png";
+        }else{
+            suffix = "up.png";
+        }
+        return new Image(imageUrl+suffix);
+    }
+
+    /**
+     * Zwraca odpowiedni Image z pliku graficznego ciała węża zależnie od kierunku danego segmentu
+     * Kierunek jest sprawdzany na podstawie położenia segmentu między poprzednim a następnym
+     * @param segment segment którego kierunek jest sprawdzana
+     * @return Image z odpowiedniego pliku graficznego ciała węża
+     */
+    private Image resolveBodyDirection(SnakeSegment segment) {
+        if(segment.getNext() == null){
+            throw new IllegalArgumentException("Ciało nie powinno być pierwszym segmentem");
+        }
         if(segment.getPrev() == null){
-            return new Image("images/tail_"+resolveTailDirection(segment));
+            throw new IllegalArgumentException("Ciało nie powinno być ostatnim segmentem");
         }
-        if(segment.equals(boardModel.getSnakeHead())){
-            return new Image("images/head_"+resolveHeadDirection(segment));
-        }
-        return new Image("images/body_"+resolveBodyDirection(segment));
-    }
-
-    private String resolveHeadDirection(SnakeSegment segment){
-      Point currentLocation = segment.getLocation();
-      Point prevLocation = segment.getPrev().getLocation();
-      if(currentLocation.getX() > prevLocation.getX()){
-        return "right.png";
-      }
-      if(currentLocation.getY() > prevLocation.getY()){
-        return "down.png";
-      }
-      if(currentLocation.getX() < prevLocation.getX()){
-        return "left.png";
-      }
-      return "up.png";
-    }
-    private String resolveTailDirection(SnakeSegment segment){
-      Point currentLocation = segment.getLocation();
-      Point nextLocation = segment.getNext().getLocation();
-      if(currentLocation.getX() > nextLocation.getX()){
-        return "right.png";
-      }
-      if(currentLocation.getY() > nextLocation.getY()){
-        return "down.png";
-      }
-      if(currentLocation.getX() < nextLocation.getX()){
-        return "left.png";
-      }
-      return "up.png";
-    }
-    private String resolveBodyDirection(SnakeSegment segment) {
+        String imageUrl = "images/body_";
+        String suffix;
         Point nextLocation = segment.getNext().getLocation();
         Point currentLocation = segment.getLocation();
         Point prevLocation = segment.getPrev().getLocation();
         if (prevLocation.getY() == nextLocation.getY()) {
-            return "horizontal.png";
+             suffix = "horizontal.png";
         }
-        if (prevLocation.getX() == nextLocation.getX()) {
-            return "vertical.png";
+        else if (prevLocation.getX() == nextLocation.getX()) {
+            suffix = "vertical.png";
         }
-        if (isBottomRight(prevLocation,currentLocation, nextLocation)) {
-            return "bottomright.png";
+        else if (isBottomRight(prevLocation, currentLocation, nextLocation)) {
+            suffix ="bottomright.png";
         }
-        if (isBottomLeft(prevLocation,currentLocation, nextLocation)) {
-            return "bottomleft.png";
+        else if (isBottomLeft(prevLocation, currentLocation, nextLocation)) {
+            suffix ="bottomleft.png";
         }
-        if (isTopRight(prevLocation,currentLocation, nextLocation)) {
-            return "topright.png";
+        else if (isTopRight(prevLocation, currentLocation, nextLocation)) {
+            suffix ="topright.png";
         }
-        if (isTopLeft(prevLocation,currentLocation, nextLocation)) {
-            return "topleft.png";
+        else if (isTopLeft(prevLocation, currentLocation, nextLocation)) {
+            suffix ="topleft.png";
+        }else {
+            suffix = "vertical.png";
         }
-        return "vertical.png";
+        return new Image(imageUrl+suffix);
 
     }
 
-    private boolean isBottomRight(Point prev, Point current, Point next){
-        return  (current.isAbove(next) && current.isLeft(prev))
+
+    /**
+     * Sprawdza czy 3 podane punkty tworzą prawy dalny róg
+     * (dowolna kolejnosc moze byc zgodnie z ruchem wskazowek zegara lub nie)
+     * @param prev punkt porzedni
+     * @param current punkt miedzy prev a next
+     * @param next punkt nastepny
+     * @return
+     */
+    private boolean isBottomRight(Point prev, Point current, Point next) {
+        return (current.isAbove(next) && current.isLeft(prev))
                 ||
                 (current.isAbove(prev) && current.isLeft(next));
     }
 
-    private boolean isBottomLeft(Point prev, Point current, Point next){
-        return  (current.isAbove(next) && current.isRight(prev))
+    /**
+     * Sprawdza czy 3 podane punkty tworzą lewy dalny róg
+     * (dowolna kolejnosc moze byc zgodnie z ruchem wskazowek zegara lub nie)
+     * @param prev punkt porzedni
+     * @param current punkt miedzy prev a next
+     * @param next punkt nastepny
+     * @return
+     */
+    private boolean isBottomLeft(Point prev, Point current, Point next) {
+        return (current.isAbove(next) && current.isRight(prev))
                 ||
                 (current.isAbove(prev) && current.isRight(next));
     }
 
-    private boolean isTopRight(Point prev, Point current, Point next){
-        return  (current.isBelow(next) && current.isLeft(prev))
+    /**
+     * Sprawdza czy 3 podane punkty tworzą prawy górny róg
+     * (dowolna kolejnosc moze byc zgodnie z ruchem wskazowek zegara lub nie)
+     * @param prev punkt porzedni
+     * @param current punkt miedzy prev a next
+     * @param next punkt nastepny
+     * @return
+     */
+    private boolean isTopRight(Point prev, Point current, Point next) {
+        return (current.isBelow(next) && current.isLeft(prev))
                 ||
                 (current.isBelow(prev) && current.isLeft(next));
     }
 
-    private boolean isTopLeft(Point prev, Point current, Point next){
-        return  (current.isBelow(next) && current.isRight(prev))
+
+    /**
+     * Sprawdza czy 3 podane punkty tworzą lewy górny róg
+     * (dowolna kolejnosc moze byc zgodnie z ruchem wskazowek zegara lub nie)
+     * @param prev punkt porzedni
+     * @param current punkt miedzy prev a next
+     * @param next punkt nastepny
+     * @return
+     */
+    private boolean isTopLeft(Point prev, Point current, Point next) {
+        return (current.isBelow(next) && current.isRight(prev))
                 ||
                 (current.isBelow(prev) && current.isRight(next));
     }
 
-    private void drawFood(){
-        boardCanvas.getGraphicsContext2D().drawImage(new Image("images/apple.png"), boardModel.getFoodLocation().getX() * SQUARE_SIZE, boardModel.getFoodLocation().getY() * SQUARE_SIZE,SQUARE_SIZE,SQUARE_SIZE);
+    /**
+     * Rysuje jedzenie dla węża
+     */
+    private void drawFood() {
+        boardCanvas.getGraphicsContext2D().drawImage(new Image("images/apple.png"), boardModel.getFoodLocation().getX() * SQUARE_SIZE, boardModel.getFoodLocation().getY() * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
     }
 
-
-
-    public void focus(){
+    /**
+     * Wywoluje metode requestFocus na canvasie aby wejscie od uzytkownika moglo byc odczytywane
+     */
+    public void focus() {
         boardCanvas.requestFocus();
     }
 

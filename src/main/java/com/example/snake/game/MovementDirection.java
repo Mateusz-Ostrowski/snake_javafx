@@ -1,7 +1,9 @@
 package com.example.snake.game;
 
-import javafx.scene.input.KeyCode;
-
+/**
+ * Enum reprezentujący kierunek poruszania się i dla uproszczenia logiki zawiera wektory
+ * które będą dodawane do położenia głowy węża
+ */
 public enum MovementDirection {
     DOWN(0,1),
     UP(0,-1),
@@ -9,7 +11,7 @@ public enum MovementDirection {
     LEFT(-1,0),
   ;
 
-  private Point vector;
+  private final Point vector;
 
   MovementDirection(int x, int y) {
     this.vector = new Point(x,y);
