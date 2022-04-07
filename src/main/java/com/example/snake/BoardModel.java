@@ -9,11 +9,14 @@ import java.util.Random;
 public class BoardModel {
   private final int width;
   private final int height;
-  private final SnakeSegment snakeHead;
+  private SnakeSegment snakeHead;
+  private MovementDirection startDirection;
   private MovementDirection direction;
   private final Point foodLocation;
   private final Random random;
   private boolean gameOver = false;
+  private int score;
+
 
   public BoardModel(int width, int height, MovementDirection startDirection) {
     this.random = new Random();
@@ -21,7 +24,20 @@ public class BoardModel {
     this.height = height;
     snakeHead = new SnakeSegment(new Point(5, 5), new SnakeSegment(new Point(5, 4), null));
     direction = startDirection;
+    this.startDirection = startDirection;
     foodLocation = new Point(random.nextInt(width),random.nextInt(height));
+    score = 0;
+  }
+
+  public void restart(){
+    snakeHead.setLocation(new Point(5,5));
+    snakeHead.getPrev().setLocation(new Point(5,4));
+    snakeHead.getPrev().setPrev(null);
+    direction = startDirection;
+    foodLocation.setX(random.nextInt(width));
+    foodLocation.setY(random.nextInt(height));
+    score = 0;
+    gameOver = false;
   }
 
   public void move() {
@@ -48,6 +64,7 @@ public class BoardModel {
       while(lastSegment.getPrev()!=null){
         lastSegment = lastSegment.getPrev();
       }
+      score++;
       lastSegment.setPrev(new SnakeSegment(prevLocation,null));
       spawnFood();
     }
@@ -106,6 +123,9 @@ public class BoardModel {
     }while (snakeHead.contains(foodLocation));
   }
 
+  public int getScore() {
+    return score;
+  }
 
   public Boolean getGameOver() {
     return gameOver;

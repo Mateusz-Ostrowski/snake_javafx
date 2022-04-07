@@ -29,7 +29,9 @@ public class SnakeSegment {
 
     public void setPrev(SnakeSegment prev) {
         this.prev = prev;
-        prev.setNext(this);
+        if(prev!=null) {
+          prev.setNext(this);
+        }
     }
 
   public SnakeSegment getNext() {

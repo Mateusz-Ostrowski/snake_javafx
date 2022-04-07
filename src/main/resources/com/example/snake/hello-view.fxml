@@ -8,8 +8,11 @@
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
+
 <VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.example.snake.BoardController"
       onKeyPressed="#onKeyPressed">
+    <Label fx:id="scoreLabel">Wynik: </Label>
+    <Button onMouseClicked="#startButton" focusTraversable="false" fx:id="startButton">Start</Button>
     <Canvas fx:id="boardCanvas" width="500" height="500" />
 </VBox>

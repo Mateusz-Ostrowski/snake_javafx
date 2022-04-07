@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
@@ -26,8 +27,7 @@ public class BoardController implements Initializable {
     private final double SNAKE_BODY_SIZE = 14;
 
     private final BoardModel boardModel;
-    private final boolean isPaused = true;
-    public Button start;
+    private boolean isPaused = true;
 
     public BoardController() {
         this.boardModel = new BoardModel(BOARD_WIDTH,BOARD_HEIGHT, MovementDirection.DOWN);
@@ -37,13 +37,21 @@ public class BoardController implements Initializable {
     private Canvas boardCanvas;
 
     @FXML
+    private Label scoreLabel;
+
+    @FXML
+    private Button startButton;
+
+    @FXML
     protected void onKeyPressed(KeyEvent event) {
-        switch (event.getCode()){
+      if(!isPaused) {
+        switch (event.getCode()) {
           case UP -> boardModel.changeDirection(MovementDirection.UP);
-          case DOWN ->  boardModel.changeDirection(MovementDirection.DOWN);
+          case DOWN -> boardModel.changeDirection(MovementDirection.DOWN);
           case LEFT -> boardModel.changeDirection(MovementDirection.LEFT);
           case RIGHT -> boardModel.changeDirection(MovementDirection.RIGHT);
         }
+      }
     }
 
     @Override
@@ -57,10 +65,20 @@ public class BoardController implements Initializable {
               drawBackground();
               drawSnake();
               drawFood();
+              scoreLabel.setText("Wynik: " + boardModel.getScore());
+          }else{
+              scoreLabel.setText("Koniec gry twoj koncowy wynik to: "+boardModel.getScore());
+              startButton.setVisible(true);
           }
       }));
        t.setCycleCount(Animation.INDEFINITE);
        t.play();
+    }
+
+    public void startButton() {
+      isPaused = false;
+      startButton.setVisible(false);
+      boardModel.restart();
     }
 
     private void drawBackground(){
@@ -187,6 +205,8 @@ public class BoardController implements Initializable {
     private void drawFood(){
         boardCanvas.getGraphicsContext2D().drawImage(new Image("images/apple.png"), boardModel.getFoodLocation().getX() * SQUARE_SIZE, boardModel.getFoodLocation().getY() * SQUARE_SIZE,SQUARE_SIZE,SQUARE_SIZE);
     }
+
+
 
     public void focus(){
         boardCanvas.requestFocus();
