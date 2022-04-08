@@ -9,66 +9,95 @@ import java.util.Objects;
  */
 
 public class SnakeSegment {
-    private Point location;
+    /**
+     * Lokalizacja obecnego segmentu
+     */
+    private Vector2D location;
+
+    /**
+     * Poprzedni segment węża
+     */
     private SnakeSegment prev;
+
+    /**
+     * Następny segment węża
+     */
     private SnakeSegment next;
 
-    public SnakeSegment(Point location, SnakeSegment prev) {
+    public SnakeSegment(Vector2D location, SnakeSegment prev) {
         this.location = location;
         this.prev = prev;
-        if(prev!=null){
-          prev.setNext(this);
+        if (prev != null) {
+            prev.setNext(this);
         }
     }
 
-    public SnakeSegment(Point location) {
-        this(location,null);
+    public SnakeSegment(Vector2D location) {
+        this(location, null);
     }
 
-    public Point getLocation() {
+    /**
+     * {@link SnakeSegment#location}
+     */
+    public Vector2D getLocation() {
         return location;
     }
 
-    public void setLocation(Point location) {
+    /**
+     * {@link SnakeSegment#location}
+     */
+    public void setLocation(Vector2D location) {
         this.location = location;
     }
 
+    /**
+     * {@link SnakeSegment#prev}
+     */
     public SnakeSegment getPrev() {
         return prev;
     }
 
+    /**
+     * {@link SnakeSegment#prev}
+     */
     public void setPrev(SnakeSegment prev) {
         this.prev = prev;
-        if(prev!=null) {
-          prev.setNext(this);
+        if (prev != null) {
+            prev.setNext(this);
         }
     }
 
-  public SnakeSegment getNext() {
-    return next;
-  }
+    /**
+     * {@link SnakeSegment#next}
+     */
+    public SnakeSegment getNext() {
+        return next;
+    }
 
-  public void setNext(SnakeSegment next) {
-    this.next = next;
-  }
+    /**
+     * {@link SnakeSegment#next}
+     */
+    public void setNext(SnakeSegment next) {
+        this.next = next;
+    }
 
     /**
      * Sprawdza czy punkt wskazany przez parametr zawiera się w obecnym segmencie węża lub do niego poprzednich
      * @param point punkt szukany w wężu
-     * @return
+     * @return zwraca prawde jeśli point zawiera się w obecnym segmencie lub poprzednich fałsz w przeciwnym razie
      */
-  public boolean contains(Point point){
+    public boolean contains(Vector2D point) {
         SnakeSegment segment = this;
-        while(segment!=null){
-            if(segment.getLocation().equals(point)){
+        while (segment != null) {
+            if (segment.getLocation().equals(point)) {
                 return true;
             }
             segment = segment.getPrev();
         }
         return false;
-  }
+    }
 
-  @Override
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

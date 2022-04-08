@@ -1,7 +1,7 @@
 package com.example.snake;
 
 import com.example.snake.game.MovementDirection;
-import com.example.snake.game.Point;
+import com.example.snake.game.Vector2D;
 import com.example.snake.game.SnakeSegment;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -20,16 +20,37 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
- * Kontroler odpowiadający za graficzną reprezentacje całego interfejsu gry oraz wykonujący pętle gry
+ * Klasa odpowiadająca za graficzną reprezentacje całego interfejsu gry oraz wykonująca pętle gry
  */
 public class BoardController implements Initializable {
+    /**
+     * Szerokość planszy (ilość kwadratów)
+     */
     private final int BOARD_WIDTH = 14;
+
+    /**
+     * Szerokość planszy (ilość kwadratów)
+     */
     private final int BOARD_HEIGHT = 14;
+
+    /**
+     * Szerokość planszy (ilość kwadratów)
+     */
     private final double SQUARE_SIZE = 30;
 
+    /**
+     * Stan gry
+     */
     private final BoardModel boardModel;
+
+    /**
+     * Flaga reprezentująca czy gra jest zapauzowana
+     */
     private boolean isPaused = true;
 
+    /**
+     * Konstruktor
+     */
     public BoardController() {
         this.boardModel = new BoardModel(BOARD_WIDTH, BOARD_HEIGHT, MovementDirection.DOWN);
     }
@@ -43,6 +64,10 @@ public class BoardController implements Initializable {
     @FXML
     private Button startButton;
 
+    /**
+     * Wykrywa kliknięcia przycisków i wywołuje zmiane na odpowiedni kierunek
+     * @param event kod przycisku z klawiatury
+     */
     @FXML
     protected void onKeyPressed(KeyEvent event) {
         if (!isPaused) {
@@ -77,6 +102,9 @@ public class BoardController implements Initializable {
         t.play();
     }
 
+    /**
+     * restartuje gre oraz
+     */
     public void startButton() {
         isPaused = false;
         startButton.setVisible(false);
@@ -118,7 +146,7 @@ public class BoardController implements Initializable {
      * @param segment segment do narysowania
      */
     private void drawSnakeSegment(SnakeSegment segment) {
-        Point location = segment.getLocation();
+        Vector2D location = segment.getLocation();
         if (boardModel.getSnakeHead().equals(segment)) {
             boardCanvas.getGraphicsContext2D().drawImage(resolveSegmentImage(segment), location.getX() * SQUARE_SIZE, location.getY() * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
         } else {
@@ -154,8 +182,8 @@ public class BoardController implements Initializable {
 
         String imageUrl = "images/head_";
         String suffix;
-        Point currentLocation = segment.getLocation();
-        Point prevLocation = segment.getPrev().getLocation();
+        Vector2D currentLocation = segment.getLocation();
+        Vector2D prevLocation = segment.getPrev().getLocation();
         if (currentLocation.getX() > prevLocation.getX()) {
             suffix = "right.png";
         }
@@ -186,8 +214,8 @@ public class BoardController implements Initializable {
 
         String imageUrl = "images/tail_";
         String suffix;
-        Point currentLocation = segment.getLocation();
-        Point nextLocation = segment.getNext().getLocation();
+        Vector2D currentLocation = segment.getLocation();
+        Vector2D nextLocation = segment.getNext().getLocation();
         if (currentLocation.getX() > nextLocation.getX()) {
             suffix = "right.png";
         }
@@ -217,9 +245,9 @@ public class BoardController implements Initializable {
         }
         String imageUrl = "images/body_";
         String suffix;
-        Point nextLocation = segment.getNext().getLocation();
-        Point currentLocation = segment.getLocation();
-        Point prevLocation = segment.getPrev().getLocation();
+        Vector2D nextLocation = segment.getNext().getLocation();
+        Vector2D currentLocation = segment.getLocation();
+        Vector2D prevLocation = segment.getPrev().getLocation();
         if (prevLocation.getY() == nextLocation.getY()) {
              suffix = "horizontal.png";
         }
@@ -253,7 +281,7 @@ public class BoardController implements Initializable {
      * @param next punkt nastepny
      * @return
      */
-    private boolean isTopLeft(Point prev, Point current, Point next) {
+    private boolean isTopLeft(Vector2D prev, Vector2D current, Vector2D next) {
         return (current.isAbove(next) && current.isLeft(prev))
                 ||
                 (current.isAbove(prev) && current.isLeft(next));
@@ -265,9 +293,9 @@ public class BoardController implements Initializable {
      * @param prev punkt porzedni
      * @param current punkt miedzy prev a next
      * @param next punkt nastepny
-     * @return prawde
+     * @return prawda jeśli 3 podane punkty tworzą prawy górny róg w innym wypadku fałsz
      */
-    private boolean isTopRight(Point prev, Point current, Point next) {
+    private boolean isTopRight(Vector2D prev, Vector2D current, Vector2D next) {
         return (current.isAbove(next) && current.isRight(prev))
                 ||
                 (current.isAbove(prev) && current.isRight(next));
@@ -279,9 +307,9 @@ public class BoardController implements Initializable {
      * @param prev punkt porzedni
      * @param current punkt miedzy prev a next
      * @param next punkt nastepny
-     * @return
+     * @return prawda jeśli 3 podane punkty tworzą lewy dolny róg w innym wypadku fałsz
      */
-    private boolean isBottomLeft(Point prev, Point current, Point next) {
+    private boolean isBottomLeft(Vector2D prev, Vector2D current, Vector2D next) {
         return (current.isBelow(next) && current.isLeft(prev))
                 ||
                 (current.isBelow(prev) && current.isLeft(next));
@@ -294,9 +322,9 @@ public class BoardController implements Initializable {
      * @param prev punkt porzedni
      * @param current punkt miedzy prev a next
      * @param next punkt nastepny
-     * @return
+     * @return prawda jeśli 3 podane punkty tworzą prawy dolny róg w innym wypadku fałsz
      */
-    private boolean isBottomRight(Point prev, Point current, Point next) {
+    private boolean isBottomRight(Vector2D prev, Vector2D current, Vector2D next) {
         return (current.isBelow(next) && current.isRight(prev))
                 ||
                 (current.isBelow(prev) && current.isRight(next));

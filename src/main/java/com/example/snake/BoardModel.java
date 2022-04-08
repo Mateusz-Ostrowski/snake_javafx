@@ -1,7 +1,7 @@
 package com.example.snake;
 
 import com.example.snake.game.MovementDirection;
-import com.example.snake.game.Point;
+import com.example.snake.game.Vector2D;
 import com.example.snake.game.SnakeSegment;
 
 import java.util.Random;
@@ -10,14 +10,40 @@ import java.util.Random;
  * Klasa przechowująca stan gry
  */
 public class BoardModel {
+  /**
+   * Szerokość planszy (ilość kwadratów)
+   */
   private final int width;
+  /**
+   * Wysokość planszy (ilość kwadratów)
+   */
   private final int height;
+  /**
+   * Wysokość planszy (ilość kwadratów)
+   */
   private SnakeSegment snakeHead;
+  /**
+   * Kierunek z początku gry
+   */
   private MovementDirection startDirection;
+  /**
+   * Obecny kierunek
+   */
   private MovementDirection direction;
-  private final Point foodLocation;
+  /**
+   * Obecna pozycja jedzenia
+   */
+  private final Vector2D foodLocation;
+
   private final Random random;
+
+  /**
+   * Flaga reprezentująca czy gra została zakończona
+   */
   private boolean gameOver = false;
+  /**
+   * Wynik
+   */
   private int score;
 
 
@@ -25,11 +51,11 @@ public class BoardModel {
     this.random = new Random();
     this.width = width;
     this.height = height;
-    snakeHead = new SnakeSegment(new Point(5, 5));
-    snakeHead.setPrev(new SnakeSegment(new Point(5, 4)));
+    snakeHead = new SnakeSegment(new Vector2D(5, 5));
+    snakeHead.setPrev(new SnakeSegment(new Vector2D(5, 4)));
     direction = startDirection;
     this.startDirection = startDirection;
-    foodLocation = new Point(-1, -1);
+    foodLocation = new Vector2D(-1, -1);
     score = 0;
   }
 
@@ -37,8 +63,8 @@ public class BoardModel {
    * Restartuje wszystkie dane zmieniające się podczas gry
    */
   public void restart() {
-    snakeHead.setLocation(new Point(5, 5));
-    snakeHead.getPrev().setLocation(new Point(5, 4));
+    snakeHead.setLocation(new Vector2D(5, 5));
+    snakeHead.getPrev().setLocation(new Vector2D(5, 4));
     snakeHead.getPrev().setPrev(null);
     direction = startDirection;
     score = 0;
@@ -60,10 +86,10 @@ public class BoardModel {
 
       //Przesunięcie całego węza
       SnakeSegment currentSegment = snakeHead.getPrev();
-      Point prevLocation = snakeHead.getLocation();
+      Vector2D prevLocation = snakeHead.getLocation();
       snakeHead.setLocation(prevLocation.plus(direction.getVector()));
       while (currentSegment != null) {
-        Point tmp = currentSegment.getLocation();
+        Vector2D tmp = currentSegment.getLocation();
         currentSegment.setLocation(prevLocation);
         prevLocation = tmp;
         currentSegment = currentSegment.getPrev();
@@ -107,21 +133,25 @@ public class BoardModel {
       }
     }
   }
-
+  /**
+   * {@link BoardModel#snakeHead}
+   */
   public SnakeSegment getSnakeHead() {
     return snakeHead;
   }
 
+  /**
+   * {@link BoardModel#width}
+   */
   public int getWidth() {
     return width;
   }
 
+  /**
+   * {@link BoardModel#height}
+   */
   public int getHeight() {
     return height;
-  }
-
-  public MovementDirection getDirection() {
-    return direction;
   }
 
   /**
@@ -135,7 +165,10 @@ public class BoardModel {
     }
   }
 
-  public Point getFoodLocation() {
+  /**
+   * {@link BoardModel#foodLocation}
+   */
+  public Vector2D getFoodLocation() {
     return foodLocation;
   }
 
@@ -149,11 +182,17 @@ public class BoardModel {
     } while (snakeHead.contains(foodLocation));
   }
 
+  /**
+   * {@link BoardModel#score}
+   */
   public int getScore() {
     return score;
   }
 
-  public Boolean isGameOver() {
+  /**
+   * {@link BoardModel#gameOver}
+   */
+  public boolean isGameOver() {
     return gameOver;
   }
 }

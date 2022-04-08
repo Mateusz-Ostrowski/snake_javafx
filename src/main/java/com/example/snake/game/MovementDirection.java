@@ -1,8 +1,7 @@
 package com.example.snake.game;
 
 /**
- * Enum reprezentujący kierunek poruszania się i dla uproszczenia logiki zawiera wektory
- * które będą dodawane do położenia głowy węża
+ * Enum reprezentujący kierunek poruszania się
  */
 public enum MovementDirection {
     DOWN(0,1),
@@ -11,13 +10,19 @@ public enum MovementDirection {
     LEFT(-1,0),
   ;
 
-  private final Point vector;
+    /**
+     * Wektor jednostkowy odpowiadający kierunkowi
+     */
+    private final Vector2D vector;
 
   MovementDirection(int x, int y) {
-    this.vector = new Point(x,y);
+    this.vector = new Vector2D(x,y);
   }
 
-  public Point getVector() {
+    /**
+     * {@link MovementDirection#vector}
+     */
+  public Vector2D getVector() {
     return vector;
   }
 }

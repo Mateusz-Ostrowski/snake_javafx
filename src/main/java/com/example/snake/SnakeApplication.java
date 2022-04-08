@@ -14,6 +14,9 @@ import java.io.IOException;
 public class SnakeApplication extends Application {
 
 
+    /**
+     * Punkt wejściowy dla aplikacji JavaFX
+     */
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(SnakeApplication.class.getResource("game-view.fxml"));
@@ -30,7 +33,11 @@ public class SnakeApplication extends Application {
 
     }
 
-
+    /**
+     * Punkt wejśiowy programu napisanego w języku Java
+     * Wywołuje {@link SnakeApplication#start(Stage)}
+     * @param args nie używane
+     */
     public static void main(String[] args) {
         launch();
     }
