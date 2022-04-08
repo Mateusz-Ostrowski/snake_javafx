@@ -21,4 +21,3 @@ Z czego ${PATH_TO_FX} to ścieżka do folderu lib pobranego javafx-sdk np.
 
 W przypadku braku javafx-sdk można rozpakować build/distributions/snake-1.0-SNAPSHOT.zip lub .tar i użyć jako
 ${PATH_TO_FX} rozpakowanego folderu lib znajdującego się w tym archiwum
-```
