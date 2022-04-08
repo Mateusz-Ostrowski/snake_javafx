@@ -260,12 +260,12 @@ public class BoardController implements Initializable {
     }
 
     /**
-     * Sprawdza czy 3 podane punkty tworzą lewy dalny róg
+     * Sprawdza czy 3 podane punkty tworzą prawy górny róg
      * (dowolna kolejnosc moze byc zgodnie z ruchem wskazowek zegara lub nie)
      * @param prev punkt porzedni
      * @param current punkt miedzy prev a next
      * @param next punkt nastepny
-     * @return
+     * @return prawde
      */
     private boolean isTopRight(Point prev, Point current, Point next) {
         return (current.isAbove(next) && current.isRight(prev))
@@ -274,7 +274,7 @@ public class BoardController implements Initializable {
     }
 
     /**
-     * Sprawdza czy 3 podane punkty tworzą prawy górny róg
+     * Sprawdza czy 3 podane punkty tworzą lewy dolny róg
      * (dowolna kolejnosc moze byc zgodnie z ruchem wskazowek zegara lub nie)
      * @param prev punkt porzedni
      * @param current punkt miedzy prev a next
@@ -289,7 +289,7 @@ public class BoardController implements Initializable {
 
 
     /**
-     * Sprawdza czy 3 podane punkty tworzą lewy górny róg
+     * Sprawdza czy 3 podane punkty tworzą prawy dolny róg
      * (dowolna kolejnosc moze byc zgodnie z ruchem wskazowek zegara lub nie)
      * @param prev punkt porzedni
      * @param current punkt miedzy prev a next
