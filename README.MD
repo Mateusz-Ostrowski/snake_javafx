@@ -2,6 +2,8 @@
 
 Projekt został zrealizowany z pomocą biblioteki JavaFX
 
+Wymagana jest Java oraz narzędzie Gradle
+
 Aby zbudować projekt należy wejść do folderu zawierającego cały projekt a następnie użyć polecenia
 
 ```
