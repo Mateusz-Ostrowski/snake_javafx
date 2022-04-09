@@ -34,7 +34,7 @@ public class BoardController implements Initializable {
     private final int BOARD_HEIGHT = 14;
 
     /**
-     * Szerokość planszy (ilość kwadratów)
+     * Bok pojedyńczego kwadratu
      */
     private final double SQUARE_SIZE = 30;
 

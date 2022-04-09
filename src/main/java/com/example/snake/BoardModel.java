@@ -19,7 +19,7 @@ public class BoardModel {
    */
   private final int height;
   /**
-   * Wysokość planszy (ilość kwadratów)
+   * Głowa listy dwukieronkowej
    */
   private SnakeSegment snakeHead;
   /**
