@@ -1,4 +1,4 @@
-package com.example.snake.game;
+package com.example.snake.vectors;
 
 /**
  * Klasa reprezentująca wektor dwu wymiarowy

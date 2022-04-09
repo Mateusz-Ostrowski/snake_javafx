@@ -1,4 +1,6 @@
-package com.example.snake.game;
+package com.example.snake;
+
+import com.example.snake.vectors.Vector2D;
 
 import java.util.Objects;
 

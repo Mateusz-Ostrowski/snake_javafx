@@ -1,8 +1,7 @@
 package com.example.snake;
 
-import com.example.snake.game.MovementDirection;
-import com.example.snake.game.Vector2D;
-import com.example.snake.game.SnakeSegment;
+import com.example.snake.vectors.MovementDirection;
+import com.example.snake.vectors.Vector2D;
 
 import java.util.Random;
 
